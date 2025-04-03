@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url
-from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,15 +22,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(" ")
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost').split(',')
 
-load_dotenv()  # Load environment variables from .env file
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -88,8 +85,8 @@ DATABASES = {
     }
 }
 
-database_url = os.environ.get("DATABASE_URL")
-DATABASES["default"] = dj_database_url.parse(database_url)
+
+DATABASES["default"] = dj_database_url.parse("postgresql://todolist_mrs8_user:5rpvehyUYPTlghrMS2mSdPoMn0veB37F@dpg-cvn7onadbo4c73bg1p3g-a.singapore-postgres.render.com/todolist_mrs8")
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -133,3 +130,8 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Allowed Hosts (Update with your Render URL)
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173", # Allow React Vite app locally
+    "effortless-speculoos-4dcbe2.netlify.app",  # Allow Netlify app  # Allow React Vite app
+]
