@@ -44,16 +44,23 @@ function App() {
   // Add a new task to Render API
   const addTask = async (taskText) => {
     try {
-      const response = await fetch(API_URL, {
+
+      const taskData = {
+        text: taskText, 
+        completed: false,
+      };
+  
+      const response = await fetch("https://todolist-django-backend.onrender.com/api/tasks/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ text: taskText, completed: false }),
+        body: JSON.stringify(taskData),
       });
   
       if (response.ok) {
         const newTask = await response.json();
+        console.log("New Task:", newTask);
         setTasks((prevTasks) => [...prevTasks, newTask]);
       } else {
         console.error("Failed to add task");
