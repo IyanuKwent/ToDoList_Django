@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import TodoList from "./components/TodoList";
 
 function App() {
-  const API_URL = "http://127.0.0.1:8000/api/tasks/";
+  const API_URL = "http://127.0.0.1:8000/tasks/";  // Ensure this is correct
+
+
 
   const [darkMode, setDarkMode] = useState(
     localStorage.getItem("darkMode") === "true"
