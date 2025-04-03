@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import TodoList from "./components/TodoList";
 
 function App() {
-  const API_URL = "https://todolist-django-backend.onrender.com/api/tasks/";  // For production
+  const API_URL = "http://127.0.0.1:8000/api/tasks/";  // For production
 
  // Ensure this is correct
 
@@ -50,7 +50,7 @@ function App() {
         completed: false,
       };
   
-      const response = await fetch("https://todolist-django-backend.onrender.com/api/tasks/", {
+      const response = await fetch("http://127.0.0.1:8000/api/tasks/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
