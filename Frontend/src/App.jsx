@@ -25,10 +25,9 @@ function App() {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await fetch(API_URL);
+        const response = await fetch(API_URL + 'tasks/');
         if (response.ok) {
           const data = await response.json();
-          console.log("Fetched tasks:", data);
           setTasks(data);
         } else {
           console.error("Failed to fetch tasks");
@@ -37,30 +36,23 @@ function App() {
         console.error("Error fetching tasks:", error);
       }
     };
-
+  
     fetchTasks();
-  }, []);
+  }, []); // Runs once when component mounts
 
   // Add a new task to Render API
-  const addTask = async (taskText) => {
+  const addTask = async (text) => {
     try {
-
-      const taskData = {
-        text: taskText, 
-        completed: false,
-      };
-  
-      const response = await fetch("http://127.0.0.1:8000/api/tasks/", {
+      const response = await fetch(API_URL + 'tasks/add/', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(taskData),
+        body: JSON.stringify({ text, completed: false }),  // Adjust accordingly
       });
   
       if (response.ok) {
         const newTask = await response.json();
-        console.log("New Task:", newTask);
         setTasks((prevTasks) => [...prevTasks, newTask]);
       } else {
         console.error("Failed to add task");
@@ -69,6 +61,7 @@ function App() {
       console.error("Error adding task:", error);
     }
   };
+  
   
 
   return (

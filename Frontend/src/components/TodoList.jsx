@@ -15,7 +15,7 @@ export default function TodoList() {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await fetch(API_URL);
+        const response = await fetch(API_URL + 'tasks/');
         if (response.ok) {
           const data = await response.json();
           setTasks(data);
@@ -26,24 +26,24 @@ export default function TodoList() {
         console.error("Error fetching tasks:", error);
       }
     };
-
+  
     fetchTasks();
   }, []); // Runs once when component mounts
+  
   
   
 
   // Update a task
   const updateTask = async (index, updatedText) => {
+    const task = tasks[index];
     try {
-      const task = tasks[index];
-      // Ensure updatedText is a string
-      const response = await fetch(API_URL + `update/${task.id}/`, {
+      const response = await fetch(API_URL + `tasks/update/${task.id}/`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          text: String(updatedText), // Ensure it's a string
+          text: updatedText,
           completed: task.completed,
         }),
       });
@@ -61,15 +61,16 @@ export default function TodoList() {
     }
   };
   
+  
 
   // Delete a task
   const removeTask = async (index) => {
     const task = tasks[index];
     try {
-      const response = await fetch(API_URL + `delete/${task.id}/`, {
+      const response = await fetch(API_URL + `tasks/delete/${task.id}/`, {
         method: "DELETE",
       });
-
+  
       if (response.ok) {
         setTasks((prevTasks) => prevTasks.filter((_, i) => i !== index));
       } else {
@@ -79,22 +80,19 @@ export default function TodoList() {
       console.error("Error deleting task:", error);
     }
   };
+  
 
   // Toggle task completion
   const toggleComplete = async (index) => {
     const task = tasks[index];
     try {
-      const response = await fetch(API_URL + `update/${task.id}/`, {
+      const response = await fetch(API_URL + `tasks/toggle/${task.id}/`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          text: task.text,
-          completed: !task.completed,
-        }),
       });
-
+  
       if (response.ok) {
         const updatedTask = await response.json();
         setTasks((prevTasks) =>
@@ -107,6 +105,7 @@ export default function TodoList() {
       console.error("Error toggling task completion:", error);
     }
   };
+  
 
   // Start editing a task
   const startEdit = (index, text) => {
