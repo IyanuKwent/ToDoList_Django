@@ -23,12 +23,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-mgr-4mb@=(-zk0zmrh$-c#on=h_!3+*ew^)ec2rl%s$48w$h09'
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(" ")
 
 load_dotenv()  # Load environment variables from .env file
 # Application definition
@@ -82,12 +82,14 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.getenv("DATABASE_URL"),
-        conn_max_age=600,
-        ssl_require=True  # Ensure SSL is required for secure connection
-    )
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
 }
+
+database_url = os.environ.get("DATABASE_URL")
+DATABASES["default"] = dj_database_url.parse(database_url)
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -131,14 +133,3 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Allowed Hosts (Update with your Render URL)
-ALLOWED_HOSTS = [
-    '127.0.0.1',
-    'localhost',
-    'https://effortless-speculoos-4dcbe2.netlify.app'  # Your Render backend URL
-]
-
-
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # Your local frontend
-    "https://effortless-speculoos-4dcbe2.netlify.app",  # Your deployed React app
-]
