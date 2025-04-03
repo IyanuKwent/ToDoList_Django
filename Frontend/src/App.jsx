@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import TodoList from "./components/TodoList";
 
 function App() {
-  const API_URL = "https://todolist-django-backend.onrender.com/api/";
+  const API_URL = "https://todolist-django-backend.onrender.com/api/tasks/";  // For production
+
  // Ensure this is correct
 
 
@@ -41,22 +42,19 @@ function App() {
   }, []);
 
   // Add a new task to Render API
-  const addTask = async () => {
-    if (task.trim() === "") return;
-
+  const addTask = async (taskText) => {
     try {
-      const response = await fetch(API_URL + "add/", {
+      const response = await fetch(API_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ text: task, completed: false }),
+        body: JSON.stringify({ text: taskText, completed: false }),
       });
-
+  
       if (response.ok) {
         const newTask = await response.json();
         setTasks((prevTasks) => [...prevTasks, newTask]);
-        setTask(""); // Reset input field
       } else {
         console.error("Failed to add task");
       }
@@ -64,6 +62,7 @@ function App() {
       console.error("Error adding task:", error);
     }
   };
+  
 
   return (
     <div className="app-container">

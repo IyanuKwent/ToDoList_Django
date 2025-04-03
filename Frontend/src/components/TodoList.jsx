@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 
 export default function TodoList() {
-  const API_URL = "https://todolist-django-backend.onrender.com/api/";
+  const API_URL = "https://todolist-django-backend.onrender.com/api/tasks/";  // For production
+
 
 
 
