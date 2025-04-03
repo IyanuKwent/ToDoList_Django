@@ -1,6 +1,6 @@
 {
   "name": "todo-app",
-  "homepage": "https://IyanuKwent.github.io/IT323---3R1_Track1/todo-app",
+  "homepage": "https://iyankwent.github.io/ToDoList_Django/Frontend",
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",

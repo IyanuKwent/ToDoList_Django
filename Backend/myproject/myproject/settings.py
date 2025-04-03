@@ -80,16 +80,12 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.getenv("DATABASE_URL")  # Will use Render's database
+        default=os.getenv("DATABASE_URL"),
+        conn_max_age=600,
+        ssl_require=True  # Ensure SSL is required for secure connection
     )
 }
 
@@ -135,10 +131,14 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Allowed Hosts (Update with your Render URL)
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    'todolist-django-d1fw.onrender.com'  # Your Render backend URL
+]
 
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Your local frontend
-    "https://your-vercel-app.vercel.app",  # Your deployed React app
+    "https://todolist-django-d1fw.onrender.com",  # Your deployed React app
 ]
