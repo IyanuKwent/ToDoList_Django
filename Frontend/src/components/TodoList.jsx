@@ -32,13 +32,14 @@ export default function TodoList() {
   const addTask = async (taskText) => {
     try {
       const response = await fetch(API_URL + "add/", {
+        
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ text: taskText, completed: false }),
       });
-
+      console.log(await response.json()); 
       if (response.ok) {
         const newTask = await response.json();
         setTasks((prevTasks) => [...prevTasks, newTask]);
