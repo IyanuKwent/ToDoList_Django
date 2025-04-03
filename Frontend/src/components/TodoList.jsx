@@ -33,17 +33,17 @@ export default function TodoList() {
   // Add a new task
   const addTask = async (taskText) => {
     try {
-      const response = await fetch(API_URL + "add/", {
-        
+      const response = await fetch("https://todolist-django-backend.onrender.com/api/tasks/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ text: taskText, completed: false }),
       });
-      console.log(await response.json()); 
+  
       if (response.ok) {
         const newTask = await response.json();
+        console.log("New Task:", newTask); // Log the new task data for debugging
         setTasks((prevTasks) => [...prevTasks, newTask]);
       } else {
         console.error("Failed to add task");
@@ -52,6 +52,8 @@ export default function TodoList() {
       console.error("Error adding task:", error);
     }
   };
+  
+  
 
   // Update a task
   const updateTask = async (index, updatedText) => {
