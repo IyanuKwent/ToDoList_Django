@@ -134,11 +134,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
-    'todolist-django-d1fw.onrender.com'  # Your Render backend URL
+    'https://effortless-speculoos-4dcbe2.netlify.app'  # Your Render backend URL
 ]
 
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Your local frontend
-    "https://todolist-django-d1fw.onrender.com",  # Your deployed React app
+    "https://effortless-speculoos-4dcbe2.netlify.app",  # Your deployed React app
 ]
