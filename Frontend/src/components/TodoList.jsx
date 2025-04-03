@@ -1,17 +1,18 @@
 import { useState, useEffect } from "react";
 
-// This component now handles fetching, adding, editing, and deleting tasks
 export default function TodoList() {
+  const API_URL = "https://todolist-django-d1fw.onrender.com/api/tasks/";
+
   const [tasks, setTasks] = useState([]);
   const [editIndex, setEditIndex] = useState(null);
   const [editText, setEditText] = useState("");
   const [filter, setFilter] = useState("all");
 
-  // Fetch tasks from the Django backend API when the component mounts
+  // Fetch tasks from the Render backend API
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/tasks/");
+        const response = await fetch(API_URL);
         if (response.ok) {
           const data = await response.json();
           setTasks(data);
@@ -24,12 +25,12 @@ export default function TodoList() {
     };
 
     fetchTasks();
-  }, []);
+  }, []); // Runs once when component mounts
 
-  // Add a new task to the database through a POST request
+  // Add a new task
   const addTask = async (taskText) => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/tasks/add/", {
+      const response = await fetch(API_URL + "add/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -48,23 +49,20 @@ export default function TodoList() {
     }
   };
 
-  // Update a task's completion status or text
+  // Update a task
   const updateTask = async (index, updatedText) => {
     try {
       const task = tasks[index];
-      const response = await fetch(
-        `http://127.0.0.1:8000/api/tasks/update/${task.id}/`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            text: updatedText,
-            completed: task.completed,
-          }),
-        }
-      );
+      const response = await fetch(API_URL + `update/${task.id}/`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          text: updatedText,
+          completed: task.completed,
+        }),
+      });
 
       if (response.ok) {
         const updatedTask = await response.json();
@@ -79,16 +77,13 @@ export default function TodoList() {
     }
   };
 
-  // Delete a task from the backend
+  // Delete a task
   const removeTask = async (index) => {
     const task = tasks[index];
     try {
-      const response = await fetch(
-        `http://127.0.0.1:8000/api/tasks/delete/${task.id}/`,
-        {
-          method: "DELETE",
-        }
-      );
+      const response = await fetch(API_URL + `delete/${task.id}/`, {
+        method: "DELETE",
+      });
 
       if (response.ok) {
         setTasks((prevTasks) => prevTasks.filter((_, i) => i !== index));
@@ -100,23 +95,20 @@ export default function TodoList() {
     }
   };
 
-  // Toggle task completion status
+  // Toggle task completion
   const toggleComplete = async (index) => {
     const task = tasks[index];
     try {
-      const response = await fetch(
-        `http://127.0.0.1:8000/api/tasks/update/${task.id}/`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            text: task.text,
-            completed: !task.completed,
-          }),
-        }
-      );
+      const response = await fetch(API_URL + `update/${task.id}/`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          text: task.text,
+          completed: !task.completed,
+        }),
+      });
 
       if (response.ok) {
         const updatedTask = await response.json();
@@ -131,16 +123,19 @@ export default function TodoList() {
     }
   };
 
+  // Start editing a task
   const startEdit = (index, text) => {
     setEditIndex(index);
     setEditText(text);
   };
 
+  // Save edited task
   const saveEdit = async () => {
     await updateTask(editIndex, editText);
     setEditIndex(null);
   };
 
+  // Filter tasks based on completion status
   const filteredTasks = tasks.filter((t) => {
     if (filter === "completed") return t.completed;
     if (filter === "pending") return !t.completed;

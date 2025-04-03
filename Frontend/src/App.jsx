@@ -2,29 +2,29 @@ import { useEffect, useState } from "react";
 import TodoList from "./components/TodoList";
 
 function App() {
+  const API_URL = "https://todolist-django-d1fw.onrender.com/api/tasks/";
+
   const [darkMode, setDarkMode] = useState(
     localStorage.getItem("darkMode") === "true"
   );
 
   const [task, setTask] = useState("");
-  const [tasks, setTasks] = useState([]); // Ensure tasks is an array
+  const [tasks, setTasks] = useState([]);
 
-  // Effect for setting the className on the body and saving to localStorage
+  // Effect for dark mode toggle
   useEffect(() => {
-    // Set the body's class based on darkMode state
     document.body.className = darkMode ? "dark-mode" : "light-mode";
-
-    // Store the current darkMode value in localStorage
     localStorage.setItem("darkMode", darkMode);
-  }, [darkMode]); // Effect runs when darkMode changes
+  }, [darkMode]);
 
+  // Fetch tasks from Render API
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/tasks/");
+        const response = await fetch(API_URL);
         if (response.ok) {
           const data = await response.json();
-          console.log("Fetched tasks:", data);  // Log fetched tasks
+          console.log("Fetched tasks:", data);
           setTasks(data);
         } else {
           console.error("Failed to fetch tasks");
@@ -33,16 +33,16 @@ function App() {
         console.error("Error fetching tasks:", error);
       }
     };
-  
+
     fetchTasks();
-  }, []); // Empty dependency array ensures this only runs once when component mounts
-  
-  // Add a new task to the backend and then update state
+  }, []);
+
+  // Add a new task to Render API
   const addTask = async () => {
     if (task.trim() === "") return;
-    
+
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/tasks/add/", {
+      const response = await fetch(API_URL + "add/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -70,7 +70,7 @@ function App() {
         <h1>Olandria's TODO App</h1>
         <button
           className="dark-mode-toggle"
-          onClick={() => setDarkMode(!darkMode)} // Toggle darkMode
+          onClick={() => setDarkMode(!darkMode)}
         >
           {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
         </button>
