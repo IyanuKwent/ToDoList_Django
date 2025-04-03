@@ -43,7 +43,7 @@ function App() {
   // Add a new task to Render API
   const addTask = async (text) => {
     try {
-      const response = await fetch(API_URL + '/add/', {
+      const response = await fetch(API_URL + 'tasks/add/', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
