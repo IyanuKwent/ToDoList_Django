@@ -36,17 +36,18 @@ export default function TodoList() {
   const updateTask = async (index, updatedText) => {
     try {
       const task = tasks[index];
+      // Ensure updatedText is a string
       const response = await fetch(API_URL + `update/${task.id}/`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          text: updatedText,
+          text: String(updatedText), // Ensure it's a string
           completed: task.completed,
         }),
       });
-
+  
       if (response.ok) {
         const updatedTask = await response.json();
         setTasks((prevTasks) =>
@@ -59,6 +60,7 @@ export default function TodoList() {
       console.error("Error updating task:", error);
     }
   };
+  
 
   // Delete a task
   const removeTask = async (index) => {
@@ -114,9 +116,15 @@ export default function TodoList() {
 
   // Save edited task
   const saveEdit = async () => {
-    await updateTask(editIndex, editText);
-    setEditIndex(null);
+    // Ensure editText is a string
+    if (typeof editText === "string") {
+      await updateTask(editIndex, editText);
+      setEditIndex(null);
+    } else {
+      console.error("Edit text is not a valid string");
+    }
   };
+  
 
   // Filter tasks based on completion status
   const filteredTasks = tasks.filter((t) => {
