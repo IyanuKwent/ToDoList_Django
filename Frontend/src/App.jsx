@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import TodoList from "./components/TodoList";
 
 function App() {
-  const API_URL = "https://todolist-django-d1fw.onrender.com/api/tasks/";
+  const API_URL = "https://todolist-django-backend.onrender.com/api/tasks/";
 
   const [darkMode, setDarkMode] = useState(
     localStorage.getItem("darkMode") === "true"
