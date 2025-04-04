@@ -44,7 +44,7 @@ function App() {
     }
 
     try {
-      const response = await fetch(API_URL + 'tasks/add/', {
+      const response = await fetch(API_URL + 'tasks/', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
