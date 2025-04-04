@@ -1,37 +1,9 @@
-import { useState, useEffect } from "react";
+export default function TodoList({ tasks, setTasks }) {
+  const API_URL = "https://todolist-django-backend.onrender.com/api/";
 
-export default function TodoList() {
-  const API_URL = "https://todolist-django-backend.onrender.com/api/";  // For production
-
-
-
-
-  const [tasks, setTasks] = useState([]);
   const [editIndex, setEditIndex] = useState(null);
   const [editText, setEditText] = useState("");
   const [filter, setFilter] = useState("all");
-
-  // Fetch tasks from the Render backend API
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const response = await fetch(API_URL + 'tasks/');
-        if (response.ok) {
-          const data = await response.json();
-          setTasks(data);
-        } else {
-          console.error("Failed to fetch tasks");
-        }
-      } catch (error) {
-        console.error("Error fetching tasks:", error);
-      }
-    };
-  
-    fetchTasks();
-  }, []); // Runs once when component mounts
-  
-  
-  
 
   // Update a task
   const updateTask = async (index, updatedText) => {
@@ -47,7 +19,7 @@ export default function TodoList() {
           completed: task.completed,
         }),
       });
-  
+
       if (response.ok) {
         const updatedTask = await response.json();
         setTasks((prevTasks) =>
@@ -60,8 +32,6 @@ export default function TodoList() {
       console.error("Error updating task:", error);
     }
   };
-  
-  
 
   // Delete a task
   const removeTask = async (index) => {
@@ -70,7 +40,7 @@ export default function TodoList() {
       const response = await fetch(API_URL + `tasks/delete/${task.id}/`, {
         method: "DELETE",
       });
-  
+
       if (response.ok) {
         setTasks((prevTasks) => prevTasks.filter((_, i) => i !== index));
       } else {
@@ -80,7 +50,6 @@ export default function TodoList() {
       console.error("Error deleting task:", error);
     }
   };
-  
 
   // Toggle task completion
   const toggleComplete = async (index) => {
@@ -92,7 +61,7 @@ export default function TodoList() {
           "Content-Type": "application/json",
         },
       });
-  
+
       if (response.ok) {
         const updatedTask = await response.json();
         setTasks((prevTasks) =>
@@ -105,7 +74,6 @@ export default function TodoList() {
       console.error("Error toggling task completion:", error);
     }
   };
-  
 
   // Start editing a task
   const startEdit = (index, text) => {
@@ -115,7 +83,6 @@ export default function TodoList() {
 
   // Save edited task
   const saveEdit = async () => {
-    // Ensure editText is a string
     if (typeof editText === "string") {
       await updateTask(editIndex, editText);
       setEditIndex(null);
@@ -123,7 +90,6 @@ export default function TodoList() {
       console.error("Edit text is not a valid string");
     }
   };
-  
 
   // Filter tasks based on completion status
   const filteredTasks = tasks.filter((t) => {

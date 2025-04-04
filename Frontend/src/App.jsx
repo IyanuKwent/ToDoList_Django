@@ -2,11 +2,7 @@ import { useEffect, useState } from "react";
 import TodoList from "./components/TodoList";
 
 function App() {
-  const API_URL = "https://todolist-django-backend.onrender.com/api/";  // For production
-
- // Ensure this is correct
-
-
+  const API_URL = "https://todolist-django-backend.onrender.com/api/";
 
   const [darkMode, setDarkMode] = useState(
     localStorage.getItem("darkMode") === "true"
@@ -25,7 +21,7 @@ function App() {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await fetch(API_URL + 'tasks/');
+        const response = await fetch(API_URL + "tasks/");
         if (response.ok) {
           const data = await response.json();
           setTasks(data);
@@ -36,24 +32,30 @@ function App() {
         console.error("Error fetching tasks:", error);
       }
     };
-  
+
     fetchTasks();
-  }, []); // Runs once when component mounts
+  }, []);
 
   // Add a new task to Render API
-  const addTask = async (text) => {
+  const addTask = async () => {
+    if (task.trim() === "") {
+      console.error("Task cannot be empty");
+      return;
+    }
+
     try {
-      const response = await fetch(API_URL + 'tasks/add/', {
+      const response = await fetch(API_URL + "tasks/add/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ text, completed: false }),  // Adjust accordingly
+        body: JSON.stringify({ text: task, completed: false }),
       });
-  
+
       if (response.ok) {
         const newTask = await response.json();
         setTasks((prevTasks) => [...prevTasks, newTask]);
+        setTask("");
       } else {
         console.error("Failed to add task");
       }
@@ -61,8 +63,6 @@ function App() {
       console.error("Error adding task:", error);
     }
   };
-  
-  
 
   return (
     <div className="app-container">
@@ -82,8 +82,19 @@ function App() {
           placeholder="Add a new task..."
           value={task}
           onChange={(e) => setTask(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              addTask();
+            }
+          }}
         />
-        <button className="add-task" onClick={addTask}>
+        <button
+          className="add-task"
+          onClick={() => {
+            addTask();
+          }}
+        >
           Add Task
         </button>
       </div>
