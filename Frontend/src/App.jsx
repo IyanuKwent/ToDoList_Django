@@ -10,10 +10,12 @@ function App() {
 
   const [task, setTask] = useState("");
   const [tasks, setTasks] = useState([]);
+  
   useEffect(() => {
     document.body.className = darkMode ? "dark-mode" : "light-mode";
     localStorage.setItem("darkMode", darkMode);
   }, [darkMode]);
+
   useEffect(() => {
     const fetchTasks = async () => {
       try {
@@ -31,6 +33,7 @@ function App() {
 
     fetchTasks();
   }, []);
+
   const addTask = async () => {
     if (task.trim() === "") {
       console.error("Task cannot be empty");
@@ -91,6 +94,15 @@ function App() {
         >
           Add Task
         </button>
+
+        <div className="submenu">
+          <button onClick={() => window.open("https://github.com/IyanuKwent/ToDoList_Django", "_blank")}>
+            Repository
+          </button>
+          <button onClick={() => window.open("https://todolist-django-backend.onrender.com/api/tasks/", "_blank")}>
+            Backend Deployment
+          </button>
+        </div>
       </div>
 
       {tasks.length > 0 ? (
