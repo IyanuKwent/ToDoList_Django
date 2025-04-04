@@ -11,7 +11,7 @@ export default function TodoList({ tasks, setTasks }) {
   const updateTask = async (index, updatedText) => {
     const task = tasks[index];
     try {
-      const response = await fetch(API_URL + `tasks/update/${task.id}/`, {
+      const response = await fetch(API_URL + `tasks/${task.id}/`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -39,7 +39,7 @@ export default function TodoList({ tasks, setTasks }) {
   const removeTask = async (index) => {
     const task = tasks[index];
     try {
-      const response = await fetch(API_URL + `tasks/delete/${task.id}/`, {
+      const response = await fetch(API_URL + `tasks/${task.id}/`, {
         method: "DELETE",
       });
 
@@ -57,7 +57,7 @@ export default function TodoList({ tasks, setTasks }) {
   const toggleComplete = async (index) => {
     const task = tasks[index];
     try {
-      const response = await fetch(API_URL + `tasks/toggle/${task.id}/`, {
+      const response = await fetch(API_URL + `tasks/${task.id}/`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
