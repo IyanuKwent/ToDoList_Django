@@ -36,33 +36,33 @@ function App() {
     fetchTasks();
   }, []);
 
-  // Add a new task to Render API
   const addTask = async () => {
     if (task.trim() === "") {
       console.error("Task cannot be empty");
       return;
     }
-
+  
     try {
-      const response = await fetch(API_URL + "tasks/add/", {
+      const response = await fetch(API_URL + 'tasks/add/', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ text: task, completed: false }),
+        body: JSON.stringify({ text: task, completed: false }),  // Send the task data as JSON
       });
-
+  
       if (response.ok) {
         const newTask = await response.json();
         setTasks((prevTasks) => [...prevTasks, newTask]);
-        setTask("");
+        setTask("");  // Clear the input field after adding the task
       } else {
-        console.error("Failed to add task");
+        console.error("Failed to add task:", response.statusText);
       }
     } catch (error) {
       console.error("Error adding task:", error);
     }
   };
+  
 
   return (
     <div className="app-container">
