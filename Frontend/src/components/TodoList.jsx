@@ -6,8 +6,6 @@ export default function TodoList({ tasks, setTasks }) {
   const [editIndex, setEditIndex] = useState(null);
   const [editText, setEditText] = useState("");
   const [filter, setFilter] = useState("all");
-
-  // Update a task
   const updateTask = async (index, updatedText) => {
     const task = tasks[index];
     try {
@@ -34,8 +32,6 @@ export default function TodoList({ tasks, setTasks }) {
       console.error("Error updating task:", error);
     }
   };
-
-  // Delete a task
   const removeTask = async (index) => {
     const task = tasks[index];
     try {
@@ -52,14 +48,11 @@ export default function TodoList({ tasks, setTasks }) {
       console.error("Error deleting task:", error);
     }
   };
-
-  // Toggle task completion
   const toggleComplete = async (index) => {
     const task = tasks[index];
     try {
-      // Use the correct URL for toggling task completion
       const response = await fetch(API_URL + `tasks/${task.id}/toggle/`, {
-        method: "PUT",  // PUT request to toggle completion
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
@@ -76,15 +69,11 @@ export default function TodoList({ tasks, setTasks }) {
     } catch (error) {
       console.error("Error toggling task completion:", error);
     }
-  };
-
-  // Start editing a task
+  }; 
   const startEdit = (index, text) => {
     setEditIndex(index);
     setEditText(text);
   };
-
-  // Save edited task
   const saveEdit = async () => {
     if (typeof editText === "string") {
       await updateTask(editIndex, editText);
@@ -93,8 +82,6 @@ export default function TodoList({ tasks, setTasks }) {
       console.error("Edit text is not a valid string");
     }
   };
-
-  // Filter tasks based on completion status
   const filteredTasks = tasks.filter((t) => {
     if (filter === "completed") return t.completed;
     if (filter === "pending") return !t.completed;

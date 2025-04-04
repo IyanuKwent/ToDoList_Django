@@ -10,14 +10,10 @@ function App() {
 
   const [task, setTask] = useState("");
   const [tasks, setTasks] = useState([]);
-
-  // Effect for dark mode toggle
   useEffect(() => {
     document.body.className = darkMode ? "dark-mode" : "light-mode";
     localStorage.setItem("darkMode", darkMode);
   }, [darkMode]);
-
-  // Fetch tasks from Render API
   useEffect(() => {
     const fetchTasks = async () => {
       try {
@@ -35,8 +31,6 @@ function App() {
 
     fetchTasks();
   }, []);
-
-  // Add a new task
   const addTask = async () => {
     if (task.trim() === "") {
       console.error("Task cannot be empty");
@@ -49,13 +43,13 @@ function App() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ text: task, completed: false }),  // Send the task data as JSON
+        body: JSON.stringify({ text: task, completed: false }),
       });
 
       if (response.ok) {
         const newTask = await response.json();
         setTasks((prevTasks) => [...prevTasks, newTask]);
-        setTask("");  // Clear the input field after adding the task
+        setTask("");
       } else {
         console.error("Failed to add task:", response.statusText);
       }
