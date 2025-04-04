@@ -36,12 +36,13 @@ function App() {
     fetchTasks();
   }, []);
 
+  // Add a new task
   const addTask = async () => {
     if (task.trim() === "") {
       console.error("Task cannot be empty");
       return;
     }
-  
+
     try {
       const response = await fetch(API_URL + 'tasks/add/', {
         method: "POST",
@@ -50,7 +51,7 @@ function App() {
         },
         body: JSON.stringify({ text: task, completed: false }),  // Send the task data as JSON
       });
-  
+
       if (response.ok) {
         const newTask = await response.json();
         setTasks((prevTasks) => [...prevTasks, newTask]);
@@ -62,7 +63,6 @@ function App() {
       console.error("Error adding task:", error);
     }
   };
-  
 
   return (
     <div className="app-container">
