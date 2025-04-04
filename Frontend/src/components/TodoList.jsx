@@ -57,8 +57,9 @@ export default function TodoList({ tasks, setTasks }) {
   const toggleComplete = async (index) => {
     const task = tasks[index];
     try {
-      const response = await fetch(API_URL + `tasks/${task.id}/`, {
-        method: "PUT",
+      // Use the correct URL for toggling task completion
+      const response = await fetch(API_URL + `tasks/${task.id}/toggle/`, {
+        method: "PUT",  // PUT request to toggle completion
         headers: {
           "Content-Type": "application/json",
         },
