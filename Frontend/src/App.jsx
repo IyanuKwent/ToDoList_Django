@@ -7,10 +7,12 @@ function App() {
   const [darkMode, setDarkMode] = useState(
     localStorage.getItem("darkMode") === "true"
   );
-
   const [task, setTask] = useState("");
   const [tasks, setTasks] = useState([]);
-  
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [loggedIn, setLoggedIn] = useState(false);
+
   useEffect(() => {
     document.body.className = darkMode ? "dark-mode" : "light-mode";
     localStorage.setItem("darkMode", darkMode);
@@ -31,8 +33,10 @@ function App() {
       }
     };
 
-    fetchTasks();
-  }, []);
+    if (loggedIn) {
+      fetchTasks();
+    }
+  }, [loggedIn]);
 
   const addTask = async () => {
     if (task.trim() === "") {
@@ -41,7 +45,7 @@ function App() {
     }
 
     try {
-      const response = await fetch(API_URL + 'tasks/', {
+      const response = await fetch(API_URL + "tasks/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -61,55 +65,116 @@ function App() {
     }
   };
 
+  const handleLogin = async () => {
+    try {
+      const response = await fetch(API_URL + "auth/login/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem("authToken", data.access); // Store the access token
+        setLoggedIn(true);
+      } else {
+        console.error("Login failed");
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+    }
+  };
+  
+
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    setLoggedIn(false);
+  };
+
   return (
     <div className="app-container">
       <div
         className={`sidebar ${tasks.length === 0 ? "centered" : "with-tasks"}`}
       >
         <h1>Olandria's TODO App</h1>
-        <button
-          className="dark-mode-toggle"
-          onClick={() => setDarkMode(!darkMode)}
-        >
-          {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
-        </button>
 
-        <input
-          type="text"
-          placeholder="Add a new task..."
-          value={task}
-          onChange={(e) => setTask(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              addTask();
-            }
-          }}
-        />
-        <button
-          className="add-task"
-          onClick={() => {
-            addTask();
-          }}
-        >
-          Add Task
-        </button>
+        {/* Login form when not logged in */}
+        {!loggedIn ? (
+          <div className="login-form">
+            <h3>Login</h3>
+            <input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button onClick={handleLogin}>Login</button>
+          </div>
+        ) : (
+          <>
+            <button onClick={handleLogout}>Logout</button>
 
-        <div className="submenu">
-          <button onClick={() => window.open("https://github.com/IyanuKwent/ToDoList_Django", "_blank")}>
-            Repository
-          </button>
-          <button onClick={() => window.open("https://todolist-django-backend.onrender.com/api/tasks/", "_blank")}>
-            Backend Deployment
-          </button>
-        </div>
+            {/* Dark Mode Toggle */}
+            <button
+              className="dark-mode-toggle"
+              onClick={() => setDarkMode(!darkMode)}
+            >
+              {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
+            </button>
+
+            {/* Add Task Input */}
+            <input
+              type="text"
+              placeholder="Add a new task..."
+              value={task}
+              onChange={(e) => setTask(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  addTask();
+                }
+              }}
+            />
+            <button
+              className="add-task"
+              onClick={() => {
+                addTask();
+              }}
+            >
+              Add Task
+            </button>
+
+            {/* Submenu for repository and backend */}
+            <div className="submenu">
+              <button
+                onClick={() =>
+                  window.open("https://github.com/IyanuKwent/ToDoList_Django", "_blank")
+                }
+              >
+                Repository
+              </button>
+              <button
+                onClick={() =>
+                  window.open("https://todolist-django-backend.onrender.com/api/tasks/", "_blank")
+                }
+              >
+                Backend Deployment
+              </button>
+            </div>
+
+            {/* Todo List */}
+            {tasks.length > 0 && <TodoList tasks={tasks} setTasks={setTasks} />}
+          </>
+        )}
       </div>
-
-      {tasks.length > 0 ? (
-        <TodoList tasks={tasks} setTasks={setTasks} />
-      ) : (
-        <p style={{ textAlign: "right", width: "0%" }}></p>
-      )}
     </div>
   );
 }
