@@ -40,14 +40,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'corsheaders',  # Add this for handling CORS
-    'myapp',         # Your app
+    'corsheaders',
+    'myapp', 
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # ADD THIS LINE for serving static files
+    'whitenoise.middleware.WhiteNoiseMiddleware', 
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -140,14 +141,14 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
-        'rest_framework.renderers.BrowsableAPIRenderer', 
+        'rest_framework.renderers.BrowsableAPIRenderer',  # 👈 Make sure this is here for browsable API
     ],
 }
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Where static files will be collected during deployment
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'), 
+    os.path.join(BASE_DIR, 'static'),  # Additional static directories for your project
 ]
 
 # Default primary key field type
@@ -160,4 +161,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://effortless-speculoos-4dcbe2.netlify.app",
 ]
 
+
+# Add your server's allowed origins here as well
+CORS_ALLOW_ALL_ORIGINS = True
 
