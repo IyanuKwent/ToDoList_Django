@@ -10,11 +10,20 @@ function App() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
-  const [authToken, setAuthToken] = useState(localStorage.getItem("authToken") || "");
+  const [authToken, setAuthToken] = useState("");
   const [loading, setLoading] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState(""); // "success" | "error"
 
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("authToken");
+    if (storedToken) {
+      setAuthToken(storedToken);
+      setLoggedIn(true);
+    }
+  }, []);
+  
   useEffect(() => {
     document.body.className = darkMode ? "dark-mode" : "light-mode";
     localStorage.setItem("darkMode", darkMode);
