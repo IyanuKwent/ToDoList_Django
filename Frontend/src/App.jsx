@@ -242,23 +242,6 @@ function App() {
             <button className="add-task" onClick={addTask}>
               Add Task
             </button>
-
-            <div className="submenu">
-              <button
-                onClick={() =>
-                  window.open("https://github.com/IyanuKwent/ToDoList_Django", "_blank")
-                }
-              >
-                Repository
-              </button>
-              <button
-                onClick={() =>
-                  window.open("https://todolist-django-backend.onrender.com/api/tasks/", "_blank")
-                }
-              >
-                Backend Deployment
-              </button>
-            </div>
           </>
         )}
       </div>
