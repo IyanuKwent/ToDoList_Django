@@ -19,7 +19,7 @@ function App() {
 
   useEffect(() => {
     const fetchTasks = async () => {
-      if (!authToken) return; // Prevent fetching if no token is available
+      if (!authToken) return;
 
       try {
         const response = await fetch(API_URL + "tasks/", {
@@ -38,10 +38,11 @@ function App() {
       }
     };
 
-    if (loggedIn) {
+    if (authToken) {
+      setLoggedIn(true);
       fetchTasks();
     }
-  }, [loggedIn, authToken]); // Re-fetch tasks when the user logs in or token changes
+  }, [authToken]);
 
   const addTask = async () => {
     if (task.trim() === "") {
@@ -64,7 +65,7 @@ function App() {
         setTasks((prevTasks) => [...prevTasks, newTask]);
         setTask("");
       } else {
-        console.error("Failed to add task:", response.statusText);
+        console.error("Failed to add task");
       }
     } catch (error) {
       console.error("Error adding task:", error);
@@ -73,7 +74,7 @@ function App() {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch(API_URL + "auth/login/", {
+      const response = await fetch("https://todolist-django-backend.onrender.com/api-token-auth/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -83,8 +84,8 @@ function App() {
 
       if (response.ok) {
         const data = await response.json();
-        localStorage.setItem("authToken", data.access); // Store the access token
-        setAuthToken(data.access);
+        localStorage.setItem("authToken", data.token);
+        setAuthToken(data.token);
         setLoggedIn(true);
       } else {
         console.error("Login failed");
@@ -98,6 +99,7 @@ function App() {
     localStorage.removeItem("authToken");
     setLoggedIn(false);
     setAuthToken("");
+    setTasks([]);
   };
 
   return (
@@ -105,7 +107,6 @@ function App() {
       <div className={`sidebar ${tasks.length === 0 ? "centered" : "with-tasks"}`}>
         <h1>Olandria's TODO App</h1>
 
-        {/* Login form when not logged in */}
         {!loggedIn ? (
           <div className="login-form">
             <h3>Login</h3>
@@ -127,7 +128,6 @@ function App() {
           <>
             <button onClick={handleLogout}>Logout</button>
 
-            {/* Dark Mode Toggle */}
             <button
               className="dark-mode-toggle"
               onClick={() => setDarkMode(!darkMode)}
@@ -135,7 +135,6 @@ function App() {
               {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
             </button>
 
-            {/* Add Task Input */}
             <input
               type="text"
               placeholder="Add a new task..."
@@ -152,7 +151,6 @@ function App() {
               Add Task
             </button>
 
-            {/* Submenu for repository and backend */}
             <div className="submenu">
               <button
                 onClick={() =>
@@ -170,7 +168,6 @@ function App() {
               </button>
             </div>
 
-            {/* Todo List */}
             {tasks.length > 0 && <TodoList tasks={tasks} setTasks={setTasks} authToken={authToken} />}
           </>
         )}
