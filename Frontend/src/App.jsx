@@ -104,82 +104,88 @@ function App() {
 
   return (
     <div className="app-container">
-      <div className="layout">
-        <div className={`sidebar ${tasks.length === 0 ? "centered" : "with-tasks"}`}>
-          <h1>Olandria's TODO App</h1>
+      <div className={`sidebar ${tasks.length === 0 ? "centered" : "with-tasks"}`}>
+        <h1>Olandria's TODO App</h1>
   
-          {!loggedIn ? (
-            <div className="login-form">
-              <h3>Login</h3>
-              <input
-                type="text"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-              <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <button onClick={handleLogin}>Login</button>
-            </div>
-          ) : (
-            <>
-              <button onClick={handleLogout}>Logout</button>
-  
-              <button
-                className="dark-mode-toggle"
-                onClick={() => setDarkMode(!darkMode)}
-              >
-                {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
-              </button>
-  
-              <input
-                type="text"
-                placeholder="Add a new task..."
-                value={task}
-                onChange={(e) => setTask(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    addTask();
-                  }
-                }}
-              />
-              <button className="add-task" onClick={addTask}>
-                Add Task
-              </button>
-  
-              <div className="submenu">
-                <button
-                  onClick={() =>
-                    window.open("https://github.com/IyanuKwent/ToDoList_Django", "_blank")
-                  }
-                >
-                  Repository
-                </button>
-                <button
-                  onClick={() =>
-                    window.open("https://todolist-django-backend.onrender.com/api/tasks/", "_blank")
-                  }
-                >
-                  Backend Deployment
-                </button>
-              </div>
-            </>
-          )}
-        </div>
-  
-        {loggedIn && tasks.length > 0 && (
-          <div className="todo-column">
-            <TodoList tasks={tasks} setTasks={setTasks} authToken={authToken} />
+        {!loggedIn ? (
+          <div className="login-form">
+            <h3>Login</h3>
+            <input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button onClick={handleLogin}>Login</button>
           </div>
+        ) : (
+          <>
+            <button onClick={handleLogout}>Logout</button>
+  
+            <button
+              className="dark-mode-toggle"
+              onClick={() => setDarkMode(!darkMode)}
+            >
+              {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
+            </button>
+  
+            <input
+              type="text"
+              placeholder="Add a new task..."
+              value={task}
+              onChange={(e) => setTask(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  addTask();
+                }
+              }}
+            />
+            <button
+              className="add-task"
+              onClick={() => {
+                addTask();
+              }}
+            >
+              Add Task
+            </button>
+  
+            <div className="submenu">
+              <button
+                onClick={() =>
+                  window.open("https://github.com/IyanuKwent/ToDoList_Django", "_blank")
+                }
+              >
+                Repository
+              </button>
+              <button
+                onClick={() =>
+                  window.open("https://todolist-django-backend.onrender.com/api/tasks/", "_blank")
+                }
+              >
+                Backend Deployment
+              </button>
+            </div>
+          </>
         )}
       </div>
+  
+      {loggedIn && tasks.length > 0 ? (
+        <div className="todo-column">
+          <TodoList tasks={tasks} setTasks={setTasks} authToken={authToken} />
+        </div>
+      ) : (
+        <p style={{ textAlign: "right", width: "0%" }}></p>
+      )}
     </div>
   );
+  
   
 }
 
