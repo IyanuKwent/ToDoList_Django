@@ -32,30 +32,39 @@ function App() {
   useEffect(() => {
     const fetchTasks = async () => {
       if (!authToken) return;
-
+  
       try {
         const response = await fetch(API_URL + "api/tasks/", {
           headers: {
             Authorization: `Token ${authToken}`,
           },
         });
-
+  
         if (response.ok) {
           const data = await response.json();
           setTasks(data);
         } else {
-          console.error("Failed to fetch tasks");
+          // ⬇️ Add this here to handle invalid/expired tokens
+          localStorage.removeItem("authToken");
+          setAuthToken("");
+          setLoggedIn(false);
+          setAlertMessage("Session expired. Please log in again.");
+          setAlertType("error");
         }
       } catch (error) {
         console.error("Error fetching tasks:", error);
+        setAlertMessage("Unable to fetch tasks.");
+        setAlertType("error");
       }
     };
-
+  
     if (authToken) {
       setLoggedIn(true);
       fetchTasks();
     }
   }, [authToken]);
+  
+  
 
   const addTask = async () => {
     if (task.trim() === "") {
