@@ -1,11 +1,12 @@
 import { useState } from "react";
 
-export default function TodoList({ tasks, setTasks }) {
+export default function TodoList({ tasks, setTasks, authToken }) {
   const API_URL = "https://todolist-django-backend.onrender.com/api/";
 
   const [editIndex, setEditIndex] = useState(null);
   const [editText, setEditText] = useState("");
   const [filter, setFilter] = useState("all");
+
   const updateTask = async (index, updatedText) => {
     const task = tasks[index];
     try {
@@ -13,6 +14,7 @@ export default function TodoList({ tasks, setTasks }) {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Token ${authToken}`,
         },
         body: JSON.stringify({
           text: updatedText,
@@ -32,11 +34,15 @@ export default function TodoList({ tasks, setTasks }) {
       console.error("Error updating task:", error);
     }
   };
+
   const removeTask = async (index) => {
     const task = tasks[index];
     try {
       const response = await fetch(API_URL + `tasks/${task.id}/`, {
         method: "DELETE",
+        headers: {
+          "Authorization": `Token ${authToken}`,
+        },
       });
 
       if (response.ok) {
@@ -48,6 +54,7 @@ export default function TodoList({ tasks, setTasks }) {
       console.error("Error deleting task:", error);
     }
   };
+
   const toggleComplete = async (index) => {
     const task = tasks[index];
     try {
@@ -55,6 +62,7 @@ export default function TodoList({ tasks, setTasks }) {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Token ${authToken}`,
         },
       });
 
@@ -69,11 +77,13 @@ export default function TodoList({ tasks, setTasks }) {
     } catch (error) {
       console.error("Error toggling task completion:", error);
     }
-  }; 
+  };
+
   const startEdit = (index, text) => {
     setEditIndex(index);
     setEditText(text);
   };
+
   const saveEdit = async () => {
     if (typeof editText === "string") {
       await updateTask(editIndex, editText);
@@ -82,6 +92,7 @@ export default function TodoList({ tasks, setTasks }) {
       console.error("Edit text is not a valid string");
     }
   };
+
   const filteredTasks = tasks.filter((t) => {
     if (filter === "completed") return t.completed;
     if (filter === "pending") return !t.completed;

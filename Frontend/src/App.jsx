@@ -12,6 +12,7 @@ function App() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
+  const [authToken, setAuthToken] = useState(localStorage.getItem("authToken"));
 
   useEffect(() => {
     document.body.className = darkMode ? "dark-mode" : "light-mode";
@@ -21,7 +22,11 @@ function App() {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await fetch(API_URL + "tasks/");
+        const response = await fetch(API_URL + "tasks/", {
+          headers: {
+            "Authorization": `Token ${authToken}`,
+          },
+        });
         if (response.ok) {
           const data = await response.json();
           setTasks(data);
@@ -36,7 +41,7 @@ function App() {
     if (loggedIn) {
       fetchTasks();
     }
-  }, [loggedIn]);
+  }, [loggedIn, authToken]);
 
   const addTask = async () => {
     if (task.trim() === "") {
@@ -49,6 +54,7 @@ function App() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Token ${authToken}`,
         },
         body: JSON.stringify({ text: task, completed: false }),
       });
@@ -74,10 +80,12 @@ function App() {
         },
         body: JSON.stringify({ username, password }),
       });
-  
+
       if (response.ok) {
         const data = await response.json();
-        localStorage.setItem("authToken", data.access); // Store the access token
+        const token = data.access;
+        localStorage.setItem("authToken", token); // Store the access token
+        setAuthToken(token);
         setLoggedIn(true);
       } else {
         console.error("Login failed");
@@ -86,18 +94,16 @@ function App() {
       console.error("Error during login:", error);
     }
   };
-  
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     setLoggedIn(false);
+    setAuthToken(null);
   };
 
   return (
     <div className="app-container">
-      <div
-        className={`sidebar ${tasks.length === 0 ? "centered" : "with-tasks"}`}
-      >
+      <div className={`sidebar ${tasks.length === 0 ? "centered" : "with-tasks"}`}>
         <h1>Olandria's TODO App</h1>
 
         {/* Login form when not logged in */}
@@ -171,7 +177,7 @@ function App() {
             </div>
 
             {/* Todo List */}
-            {tasks.length > 0 && <TodoList tasks={tasks} setTasks={setTasks} />}
+            {tasks.length > 0 && <TodoList tasks={tasks} setTasks={setTasks} authToken={authToken} />}
           </>
         )}
       </div>
