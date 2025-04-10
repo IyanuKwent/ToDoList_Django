@@ -54,31 +54,46 @@ function App() {
       setAlertType("error");
       return;
     }
-
+  
     try {
-      const response = await fetch("https://todolist-django-backend.onrender.com/api-token-auth/", {
+      // Step 1: Authenticate and get the token
+      const authResponse = await fetch("https://todolist-django-backend.onrender.com/api-token-auth/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ username, password }),
       });
-
-      if (response.ok) {
-
-        const data = await response.json();
-        localStorage.setItem("authToken", data.token); // ✅ This is for TokenAuth
-        setAuthToken(data.token);
+  
+      if (authResponse.ok) {
+        const authData = await authResponse.json();
+        localStorage.setItem("authToken", authData.token); // Save the token
+        setAuthToken(authData.token);
         setLoggedIn(true);
-
-        const newTask = await response.json();
-        setTasks([...tasks, newTask]);
-        setTask("");
-        setAlertMessage("Task added!");
-        setAlertType("success");
-
+  
+        // Step 2: Add the task using the token for authorization
+        const taskResponse = await fetch("https://todolist-django-backend.onrender.com/api/tasks/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Token ${authData.token}`, // Include the token in the request
+          },
+          body: JSON.stringify({ title: task }), // Pass the task title to create a new task
+        });
+  
+        if (taskResponse.ok) {
+          const newTask = await taskResponse.json();
+          setTasks([...tasks, newTask]); // Add the new task to the list
+          setTask(""); // Clear the input
+          setAlertMessage("Task added!");
+          setAlertType("success");
+        } else {
+          setAlertMessage("Failed to add task.");
+          setAlertType("error");
+        }
+  
       } else {
-        setAlertMessage("Failed to add task.");
+        setAlertMessage("Failed to authenticate.");
         setAlertType("error");
       }
     } catch (error) {
@@ -87,6 +102,7 @@ function App() {
       setAlertType("error");
     }
   };
+  
 
   const handleLogin = async () => {
     setLoading(true);
