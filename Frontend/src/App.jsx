@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import TodoList from "./components/TodoList";
 
 function App() {
-  const API_URL = "https://todolist-django-backend.onrender.com/api/";
+  const API_URL = "https://todolist-django-backend.onrender.com/";
 
   const [darkMode, setDarkMode] = useState(localStorage.getItem("darkMode") === "true");
   const [task, setTask] = useState("");
@@ -25,7 +25,7 @@ function App() {
       if (!authToken) return;
 
       try {
-        const response = await fetch(API_URL + "tasks/", {
+        const response = await fetch(API_URL + "api/tasks/", {
           headers: {
             Authorization: `Token ${authToken}`,
           },
@@ -76,7 +76,7 @@ function App() {
         setTask("");
         setAlertMessage("Task added!");
         setAlertType("success");
-        
+
       } else {
         setAlertMessage("Failed to add task.");
         setAlertType("error");
