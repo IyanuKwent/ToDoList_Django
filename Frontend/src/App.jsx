@@ -65,11 +65,18 @@ function App() {
       });
 
       if (response.ok) {
+
+        const data = await response.json();
+        localStorage.setItem("authToken", data.token); // ✅ This is for TokenAuth
+        setAuthToken(data.token);
+        setLoggedIn(true);
+
         const newTask = await response.json();
         setTasks([...tasks, newTask]);
         setTask("");
         setAlertMessage("Task added!");
         setAlertType("success");
+        
       } else {
         setAlertMessage("Failed to add task.");
         setAlertType("error");
