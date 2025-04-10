@@ -77,7 +77,8 @@ function App() {
             "Content-Type": "application/json",
             Authorization: `Token ${authData.token}`,
           },
-          body: JSON.stringify({ title: task }),
+          body: JSON.stringify({ text: task }),
+
         });
       
         if (taskResponse.ok) {
