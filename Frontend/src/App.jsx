@@ -178,6 +178,23 @@ function App() {
             {alertMessage}
           </div>
         )}
+        
+        <div className="submenu">
+              <button
+                onClick={() =>
+                  window.open("https://github.com/IyanuKwent/ToDoList_Django", "_blank")
+                }
+              >
+                Repository
+              </button>
+              <button
+                onClick={() =>
+                  window.open("https://todolist-django-backend.onrender.com/api/tasks/", "_blank")
+                }
+              >
+                Backend Deployment
+              </button>
+            </div>
 
         {!loggedIn ? (
           <div className="login-form">
@@ -198,6 +215,7 @@ function App() {
               {loading ? "Logging in..." : "Login"}
             </button>
           </div>
+          
         ) : (
           <>
             <button onClick={handleLogout}>Logout</button>
