@@ -51,19 +51,19 @@ function App() {
     }
 
     try {
-      const response = await fetch(API_URL + "tasks/", {
+      const response = await fetch("https://todolist-django-backend.onrender.com/api-token-auth/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Token ${authToken}`,
         },
-        body: JSON.stringify({ text: task, completed: false }),
+        body: JSON.stringify({ username, password }),
       });
-
+      
       if (response.ok) {
-        const newTask = await response.json();
-        setTasks((prevTasks) => [...prevTasks, newTask]);
-        setTask("");
+        const data = await response.json();
+        localStorage.setItem("authToken", data.token); 
+        setAuthToken(data.token);
+        setLoggedIn(true);
       } else {
         console.error("Failed to add task");
       }
@@ -177,3 +177,4 @@ function App() {
 }
 
 export default App;
+y
