@@ -11,6 +11,9 @@ function App() {
   const [password, setPassword] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
   const [authToken, setAuthToken] = useState(localStorage.getItem("authToken") || "");
+  const [loading, setLoading] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertType, setAlertType] = useState(""); // "success" | "error"
 
   useEffect(() => {
     document.body.className = darkMode ? "dark-mode" : "light-mode";
@@ -24,9 +27,10 @@ function App() {
       try {
         const response = await fetch(API_URL + "tasks/", {
           headers: {
-            "Authorization": `Token ${authToken}`,
+            Authorization: `Token ${authToken}`,
           },
         });
+
         if (response.ok) {
           const data = await response.json();
           setTasks(data);
@@ -46,39 +50,47 @@ function App() {
 
   const addTask = async () => {
     if (task.trim() === "") {
-      console.error("Task cannot be empty");
+      setAlertMessage("Task cannot be empty.");
+      setAlertType("error");
       return;
     }
 
     try {
-      const response = await fetch("https://todolist-django-backend.onrender.com/api-token-auth/", {
+      const response = await fetch(API_URL + "tasks/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Token ${authToken}`,
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ title: task }),
       });
-      
+
       if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem("authToken", data.token); 
-        setAuthToken(data.token);
-        setLoggedIn(true);
+        const newTask = await response.json();
+        setTasks([...tasks, newTask]);
+        setTask("");
+        setAlertMessage("Task added!");
+        setAlertType("success");
       } else {
-        console.error("Failed to add task");
+        setAlertMessage("Failed to add task.");
+        setAlertType("error");
       }
     } catch (error) {
       console.error("Error adding task:", error);
+      setAlertMessage("An error occurred while adding task.");
+      setAlertType("error");
     }
   };
 
   const handleLogin = async () => {
+    setLoading(true);
+    setAlertMessage("Logging in...");
+    setAlertType("success");
+
     try {
-      const response = await fetch("https://todolist-django-backend.onrender.com/api-token-auth/", {
+      const response = await fetch(API_URL + "api-token-auth/", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
       });
 
@@ -87,11 +99,17 @@ function App() {
         localStorage.setItem("authToken", data.token);
         setAuthToken(data.token);
         setLoggedIn(true);
+        setAlertMessage("Login successful!");
+        setAlertType("success");
       } else {
-        console.error("Login failed");
+        setAlertMessage("Invalid username or password.");
+        setAlertType("error");
       }
     } catch (error) {
-      console.error("Error during login:", error);
+      setAlertMessage("Login failed due to a server error.");
+      setAlertType("error");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -100,13 +118,23 @@ function App() {
     setLoggedIn(false);
     setAuthToken("");
     setTasks([]);
+    setUsername("");
+    setPassword("");
+    setAlertMessage("Logged out.");
+    setAlertType("success");
   };
 
   return (
-    <div className="app-container">
-      <div className={`sidebar ${tasks.length === 0 ? "centered" : "with-tasks"}`}>
+    <div className="app-container" style={{ display: "flex", height: "100vh" }}>
+      <div className={`sidebar ${tasks.length === 0 && !loggedIn ? "centered" : "with-tasks"}`}>
         <h1>Olandria's TODO App</h1>
-  
+
+        {alertMessage && (
+          <div className={`alert ${alertType}`}>
+            {alertMessage}
+          </div>
+        )}
+
         {!loggedIn ? (
           <div className="login-form">
             <h3>Login</h3>
@@ -122,19 +150,21 @@ function App() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <button onClick={handleLogin}>Login</button>
+            <button onClick={handleLogin} disabled={loading}>
+              {loading ? "Logging in..." : "Login"}
+            </button>
           </div>
         ) : (
           <>
             <button onClick={handleLogout}>Logout</button>
-  
+
             <button
               className="dark-mode-toggle"
               onClick={() => setDarkMode(!darkMode)}
             >
               {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
             </button>
-  
+
             <input
               type="text"
               placeholder="Add a new task..."
@@ -147,15 +177,10 @@ function App() {
                 }
               }}
             />
-            <button
-              className="add-task"
-              onClick={() => {
-                addTask();
-              }}
-            >
+            <button className="add-task" onClick={addTask}>
               Add Task
             </button>
-  
+
             <div className="submenu">
               <button
                 onClick={() =>
@@ -175,18 +200,14 @@ function App() {
           </>
         )}
       </div>
-  
-      {loggedIn && tasks.length > 0 ? (
-        <div className="todo-column">
+
+      {loggedIn && (
+        <div className="todo-column" style={{ flexGrow: 1, padding: "30px", overflowY: "auto" }}>
           <TodoList tasks={tasks} setTasks={setTasks} authToken={authToken} />
         </div>
-      ) : (
-        <p style={{ textAlign: "right", width: "0%" }}></p>
       )}
     </div>
   );
-  
-  
 }
 
 export default App;
