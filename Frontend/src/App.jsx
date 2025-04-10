@@ -4,15 +4,13 @@ import TodoList from "./components/TodoList";
 function App() {
   const API_URL = "https://todolist-django-backend.onrender.com/api/";
 
-  const [darkMode, setDarkMode] = useState(
-    localStorage.getItem("darkMode") === "true"
-  );
+  const [darkMode, setDarkMode] = useState(localStorage.getItem("darkMode") === "true");
   const [task, setTask] = useState("");
   const [tasks, setTasks] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
-  const [authToken, setAuthToken] = useState(localStorage.getItem("authToken"));
+  const [authToken, setAuthToken] = useState(localStorage.getItem("authToken") || "");
 
   useEffect(() => {
     document.body.className = darkMode ? "dark-mode" : "light-mode";
@@ -21,6 +19,8 @@ function App() {
 
   useEffect(() => {
     const fetchTasks = async () => {
+      if (!authToken) return; // Prevent fetching if no token is available
+
       try {
         const response = await fetch(API_URL + "tasks/", {
           headers: {
@@ -41,7 +41,7 @@ function App() {
     if (loggedIn) {
       fetchTasks();
     }
-  }, [loggedIn, authToken]);
+  }, [loggedIn, authToken]); // Re-fetch tasks when the user logs in or token changes
 
   const addTask = async () => {
     if (task.trim() === "") {
@@ -83,9 +83,8 @@ function App() {
 
       if (response.ok) {
         const data = await response.json();
-        const token = data.access;
-        localStorage.setItem("authToken", token); // Store the access token
-        setAuthToken(token);
+        localStorage.setItem("authToken", data.access); // Store the access token
+        setAuthToken(data.access);
         setLoggedIn(true);
       } else {
         console.error("Login failed");
@@ -98,7 +97,7 @@ function App() {
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     setLoggedIn(false);
-    setAuthToken(null);
+    setAuthToken("");
   };
 
   return (
@@ -149,12 +148,7 @@ function App() {
                 }
               }}
             />
-            <button
-              className="add-task"
-              onClick={() => {
-                addTask();
-              }}
-            >
+            <button className="add-task" onClick={addTask}>
               Add Task
             </button>
 
