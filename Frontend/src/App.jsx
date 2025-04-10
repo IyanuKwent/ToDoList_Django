@@ -56,7 +56,6 @@ function App() {
     }
   
     try {
-      // Step 1: Authenticate and get the token
       const authResponse = await fetch("https://todolist-django-backend.onrender.com/api-token-auth/", {
         method: "POST",
         headers: {
@@ -64,38 +63,42 @@ function App() {
         },
         body: JSON.stringify({ username, password }),
       });
-  
+      
       if (authResponse.ok) {
         const authData = await authResponse.json();
-        localStorage.setItem("authToken", authData.token); // Save the token
+        localStorage.setItem("authToken", authData.token); 
         setAuthToken(authData.token);
         setLoggedIn(true);
-  
-        // Step 2: Add the task using the token for authorization
+      
+        // Send task
         const taskResponse = await fetch("https://todolist-django-backend.onrender.com/api/tasks/", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Token ${authData.token}`, // Include the token in the request
+            Authorization: `Token ${authData.token}`,
           },
-          body: JSON.stringify({ title: task }), // Pass the task title to create a new task
+          body: JSON.stringify({ title: task }),
         });
-  
+      
         if (taskResponse.ok) {
           const newTask = await taskResponse.json();
-          setTasks([...tasks, newTask]); // Add the new task to the list
-          setTask(""); // Clear the input
+          setTasks([...tasks, newTask]);
+          setTask(""); 
           setAlertMessage("Task added!");
           setAlertType("success");
         } else {
+          const errorData = await taskResponse.json();
+          console.error("Error adding task:", errorData);
           setAlertMessage("Failed to add task.");
           setAlertType("error");
         }
-  
       } else {
+        const errorData = await authResponse.json();
+        console.error("Authentication failed:", errorData);
         setAlertMessage("Failed to authenticate.");
         setAlertType("error");
       }
+      
     } catch (error) {
       console.error("Error adding task:", error);
       setAlertMessage("An error occurred while adding task.");
