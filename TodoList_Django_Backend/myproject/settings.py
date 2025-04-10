@@ -25,8 +25,8 @@ SECRET_KEY = 'django-insecure-1z3!9)0rjrshc*vbt%q*^t9*42yqe-*od1o&cz$e+c@u#!waji
 #SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = True
-DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
+DEBUG = True
+#DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'todolist-django-backend.onrender.com']
 
@@ -141,9 +141,10 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
-        'rest_framework.renderers.BrowsableAPIRenderer',  # 👈 Make sure this is here for browsable API
+        'rest_framework.renderers.BrowsableAPIRenderer',
     ],
 }
+
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Where static files will be collected during deployment
@@ -161,7 +162,4 @@ CORS_ALLOWED_ORIGINS = [
     "https://effortless-speculoos-4dcbe2.netlify.app",
 ]
 
-
-# Add your server's allowed origins here as well
-CORS_ALLOW_ALL_ORIGINS = True
 
