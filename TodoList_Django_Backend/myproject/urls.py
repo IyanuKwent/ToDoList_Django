@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from rest_framework.authtoken.views import obtain_auth_token  # ✅ NEW
+from rest_framework.authtoken.views import obtain_auth_token 
 from myapp.views import TaskViewSet
 from django.http import JsonResponse
 
@@ -20,5 +20,5 @@ urlpatterns = [
     path('api/auth/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
-    path('api-token-auth/', obtain_auth_token, name='api_token_auth'),  # ✅ ADD THIS
+    path('api-token-auth/', obtain_auth_token, name='api_token_auth'), 
 ]
